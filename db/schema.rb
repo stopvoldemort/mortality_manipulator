@@ -10,13 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180208162947) do
+ActiveRecord::Schema.define(version: 20180209162035) do
+
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.integer "state_id"
+  end
 
   create_table "county_data", force: :cascade do |t|
-    t.string "name"
-    t.string "state"
     t.integer "deaths"
     t.integer "population"
+    t.integer "county_id"
+  end
+
+  create_table "divisions", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "regions", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "states", force: :cascade do |t|
+    t.string "name"
+    t.integer "region_id"
+    t.string "abbreviation"
+    t.integer "division_id"
   end
 
 end

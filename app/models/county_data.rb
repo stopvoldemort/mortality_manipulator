@@ -1,34 +1,24 @@
 class CountyData < ApplicationRecord
+  belongs_to :county
 
-  def self.county_rates
-    county_rates = self.all.each_with_object({}) do |data, agg|
-      agg[data.county_string] = data.county_rate
-    end
-    county_rates
+  def state
+    self.county.state
   end
 
-  def county_string
-    "#{self.name}, #{self.state}"
+  def division
+    self.county.state.division
   end
 
-  def county_rate
-    ((self.deaths.to_f / self.population.to_f) * 100000).round(2)
+  def region
+    self.county.state.region
   end
 
-  def self.state_population(state)
-    self.all.select{|c|c.state == state}.map(&:population).reduce(&:+)
-  end
-
-  
-
-  def self.filter_rates(filter)
-    self.all.group_by(&"#{filter}".to_sym).transform_values do |s|
-      deaths = s.reduce(0) { |agg, c| agg + c.deaths }
-      population = s.reduce(0) { |agg, c| agg + c.population }
+  def self.mortality_rates_by(filter)
+    self.all.group_by(&"#{filter}".to_sym).transform_keys(&:name).transform_values do |s|
+      deaths = s.sum(&:deaths)
+      population = s.sum(&:population)
       ((deaths.to_f / population.to_f) * 100000).round(2)
     end
   end
-
-
 
 end
